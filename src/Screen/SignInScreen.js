@@ -3,8 +3,12 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import CheckBox from '@react-native-community/checkbox'; 
 
-const SignInScreen = () => {
+const SignInScreen = ({navigation}) => {
   const [isSelected, setSelection] = useState(false);
+  const handleLogin =()=>{
+    navigation.navigate('HOME')
+  }
+  
 
   return (
     <View style={styles.container}>
@@ -36,10 +40,13 @@ const SignInScreen = () => {
             />
             <Text style={styles.Remember}>Remember me</Text>
           </View>
-          <TouchableOpacity>
-            <View style={styles.Button}>
+          <TouchableOpacity
+          onPress={handleLogin}
+          style={styles.Button}
+          >
+             
               <Text style={{ color: "white" }}>SIGN IN</Text>
-            </View>
+            
           </TouchableOpacity>
         </View>
       </View>
