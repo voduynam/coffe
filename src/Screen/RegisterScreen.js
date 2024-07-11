@@ -37,7 +37,7 @@ const RegisterScreen = () => {
                     <TouchableOpacity>
 
                         <View style={styles.Button}>
-                            <Text style={{ color: "white" }}>SIGN IN</Text>
+                            <Text style={{ color: "white" }}>SIGN UP</Text>
                         </View>
 
                     </TouchableOpacity>

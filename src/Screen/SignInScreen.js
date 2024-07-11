@@ -2,11 +2,17 @@ import React, { useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import CheckBox from '@react-native-community/checkbox'; 
+import { useDispatch,  } from 'react-redux';
 
-const SignInScreen = ({navigation}) => {
+const SignInScreen = () => {
+
   const [isSelected, setSelection] = useState(false);
+
+  
+  const dispatch=useDispatch();
+  
   const handleLogin =()=>{
-    navigation.navigate('HOME')
+    dispatch(login());
   }
   
 
