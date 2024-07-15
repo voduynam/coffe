@@ -1,5 +1,5 @@
-[
-    {
+{"username":[
+   {
       "Email": "Madalyn_Kertzmann82@gmail.com",
       "Password": "pzGpqLfNoNj2NOc",
       "id": "1"
@@ -39,4 +39,4 @@
         "Password": "123",
         "id": "8"
     }
-  ]
+  ]}

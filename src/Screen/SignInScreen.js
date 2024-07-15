@@ -2,41 +2,52 @@ import React, { useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import CheckBox from '@react-native-community/checkbox'; 
-import { useDispatch,  } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../redux/cartSlice';
 
 const SignInScreen = () => {
-
   const [isSelected, setSelection] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
+  const loginError = useSelector(state => state.cart.loginError);
 
-  
-  const dispatch=useDispatch();
-  
-  const handleLogin =()=>{
-    dispatch(login());
-  }
-  
+  const handleLogin = () => {
+    dispatch(login({ email, password }));
+  };
 
   return (
     <View style={styles.container}>
       <Image source={require("../asset/CoffeeShotlogo.png")} style={styles.imageLY} />
       <View style={styles.ContainerForm}>
         <Text style={styles.TextSignUp}>Sign In</Text>
-        <Text style={styles.TextSologan}>It’s coffee time! Login and lets get all the coffee in the world! Or at least iced coffee. </Text>
+        <Text style={styles.TextSologan}>
+          It’s coffee time! Login and lets get all the coffee in the world! Or at least iced coffee.
+        </Text>
         <View style={styles.UserInput}>
           <Text style={styles.TextUser}>Email</Text>
           <TextInput
             style={styles.inputUser}
-            placeholder='Enter Email'
+            placeholder="Enter Email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            
             required
           />
           <Text style={styles.TextUser}>Password</Text>
           <TextInput
             style={styles.inputUser}
-            placeholder='Enter password'
-            required
+            placeholder="Enter password"
+            value={password}
+            onChangeText={setPassword}
             secureTextEntry
+            required
           />
         </View>
+        {loginError &&(
+          <Text style={styles.loginError}> {loginError}</Text>
+        )}
         <View>
           <View style={styles.checkboxContainer}>
             <CheckBox
@@ -47,12 +58,10 @@ const SignInScreen = () => {
             <Text style={styles.Remember}>Remember me</Text>
           </View>
           <TouchableOpacity
-          onPress={handleLogin}
-          style={styles.Button}
+            onPress={handleLogin}
+            style={styles.Button}
           >
-             
-              <Text style={{ color: "white" }}>SIGN IN</Text>
-            
+            <Text style={{ color: "white" }}>SIGN IN</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -111,6 +120,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 20,
   },
+  loginError:{
+    color:"red",
+    
+
+  },
   Button: {
     backgroundColor: "#4B2C20",
     height: 50,
@@ -123,8 +137,8 @@ const styles = StyleSheet.create({
   Remember: {
     textAlign: "center",
     marginTop: 10,
-    alignItems:"center",
-    marginBottom:10,
+    alignItems: "center",
+    marginBottom: 10,
   },
   checkboxContainer: {
     flexDirection: "row",

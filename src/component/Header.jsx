@@ -4,15 +4,21 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Foundation from 'react-native-vector-icons/Foundation';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import { useSelector } from 'react-redux';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearAll } from '../redux/cartSlice';
 
-const Header = () => {
+const Header = ({isCart}) => {
   const navigation = useNavigation();
   const cartItems = useSelector((state) => state.cart.items);
-
+  const dispatch=useDispatch();
   // handleCart
   const handleCart = () => {
     navigation.navigate('CART_PRODUCT');
+  };
+  //handleclear
+  const handleClear = () => {
+    dispatch(clearAll());
   };
 
   return (
@@ -28,13 +34,34 @@ const Header = () => {
       <Image source={require('../asset/CoffeeShotlogo.png')} style={styles.imgHeader} />
 
       <View style={{ position: 'relative' }}>
-        <TouchableOpacity style={styles.iconBag} onPress={handleCart}>
+          
+      
+        
+        {isCart?(
+          <TouchableOpacity 
+          style={styles.iconBag}
+           onPress={handleClear}
+          >
+          <MaterialCommunityIcons
+            name='delete' 
+            size={33} 
+            color='#272727'/>
+         </TouchableOpacity>
+          
+        ):(
+          <TouchableOpacity style={styles.iconBag} onPress={handleCart}>
           <SimpleLineIcons 
             name="handbag"
             size={33}
-            color="#272727"
+            color="#272727" 
           />
-          {cartItems.length > 0 ? (
+          </TouchableOpacity>
+          )
+          }
+          
+         
+        
+        {cartItems.length > 0 ? (
             <View style={styles.badgeContainer}>
               <Text style={styles.badgeText}>
                 {cartItems.length}
@@ -46,10 +73,7 @@ const Header = () => {
               0
             </Text>
           </View>
-          )
-         
-          }
-        </TouchableOpacity>
+          )}
       </View>
     </View>
   );

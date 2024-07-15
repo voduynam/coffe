@@ -1,9 +1,15 @@
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { Image, StyleSheet, Text, Touchable, TouchableOpacity, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 
 
 const RegisterScreen = () => {
+  const navagation =useNavigation();
+  
+  const handleSignup =() =>{
+    navagation.navigate("SIGNIN");
+  }
     return (
         <View style={styles.container}>
             <Image source={require("../asset/CoffeeShotlogo.png")} style={styles.imageLY} />
@@ -34,10 +40,15 @@ const RegisterScreen = () => {
                         </View>
                     </TouchableOpacity>
                     <Text style={styles.Already}>Already have an account?</Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={handleSignup}
+                    >
+                      
+                        <View style={styles.Button}
+                          
 
-                        <View style={styles.Button}>
-                            <Text style={{ color: "white" }}>SIGN UP</Text>
+                        >
+                            <Text style={{ color: "white" }}>SIGN IN</Text>
                         </View>
 
                     </TouchableOpacity>

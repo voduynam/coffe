@@ -14,70 +14,42 @@ import { useNavigation } from '@react-navigation/native';
     const totalPrice = useSelector((state) => state.cart.totalPrice);
     const dispatch = useDispatch();
 
-    const handleRemoveFromCart = (item) => {
-      dispatch(removeFromCart(item));
-    };
-
-    const handleIncrementQuantity = (item) => {
-      dispatch(incrementQuantity(item));
-    };
-
-    const handleDecrementQuantity = (item) => {
-      dispatch(decrementQuantity(item));
-    };
     const handleODder = ()=>{
-      navigation.navigate("CHECKTOTALPRODUCTDETAIL")
+      navigation.navigate("SCAN_PAY")
     }
 
     const renderCartItem = ({ item }) => (
       <View style={styles.cartItem}>
-        <Image source={{ uri: item.image }} style={styles.image} />
         <View style={styles.details}>
           <Text style={styles.title}>{item.title}</Text>
           <Text style={styles.info}>Size: {item.size}</Text>
           <Text style={styles.info}>Ice: {item.ice}</Text>
           <Text style={styles.info}>Sweetness: {item.sweetness}</Text>
-          <TouchableOpacity onPress={() => handleRemoveFromCart(item)} style={styles.removeButton}>
-            <Text style={styles.removeButtonText}>Remove</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.quantityContainer}>
-          <View style={styles.InDcquantity}>
-            <TouchableOpacity onPress={() => handleIncrementQuantity(item)}>
-              <Ionicons name="add" color="#9C4400" size={30} />
-            </TouchableOpacity>
-
-            <Text style={styles.TextQuantity}>{item.quantity}</Text>
-
-            <TouchableOpacity onPress={() => handleDecrementQuantity(item)}>
-              <AntDesign name="minus" color="#9C4400" size={30} />
-            </TouchableOpacity>
-          </View>
-          <View>
+          <Text style={styles.info}>Quantity :{item.quantity}</Text>
+        </View>      
             <Text style={styles.TextPrice}>{item.totalPrice}$</Text>
-          </View>
+       
         </View>
-      </View>
+     
     );
 
     return (
       <View style={styles.container}>
 
-        <Header  isCart={true}/>
+        <Header/>
         <FlatList
           data={cartItems}
           renderItem={renderCartItem}
           keyExtractor={(item) => `${item.id}-${item.size}-${item.ice}-${item.sweetness}`}
-
           contentContainerStyle={styles.cartList}
-          ListEmptyComponent={<Text style={styles.emptyText}>Your cart is empty</Text>}
+          
         />
-        
+         <Text style={styles.textTotalPrice}>TotalPrice: {totalPrice}$</Text>
         <TouchableOpacity
           onPress={handleODder}
           style={styles.ButtonContainer}
         >
-          <Text style={{ color: "white", fontSize: 24, fontWeight: "600" }}>Oder Now</Text>
+          <Text style={{ color: "white", fontSize: 24, fontWeight: "600" }}>Pay Now</Text>
         </TouchableOpacity>
       </View>
     );
@@ -89,20 +61,14 @@ import { useNavigation } from '@react-navigation/native';
       backgroundColor: '#F6F2ED',
     },
     cartList: {
-      padding: 15,
+      padding: 13,
     },
     cartItem: {
       flexDirection: 'row',
-      backgroundColor: '#fff',
+      backgroundColor: '#F6F2ED',
       marginBottom: 10,
       borderRadius: 10,
-      overflow: 'hidden',
-      elevation: 1,
-      position: 'relative',
-    },
-    image: {
-      width: 80,
-      height: 100,
+      
     },
     details: {
       flex: 1,
@@ -121,24 +87,9 @@ import { useNavigation } from '@react-navigation/native';
       color: 'gray',
       marginBottom: 5,
     },
-    removeButton: {
-      backgroundColor: '#4E8D7C',
-      borderRadius: 5,
-      padding: 5,
-      alignItems: 'center',
-    },
-    removeButtonText: {
-      color: 'white',
-      fontFamily: 'Poppins',
-      fontWeight: '700',
-    },
-    emptyText: {
-      textAlign: 'center',
-      fontFamily: 'Poppins',
-      fontSize: 16,
-      color: 'gray',
-      marginTop: 20,
-    },
+
+
+ 
     quantityContainer: {
       position: 'absolute',
       right: 10,
@@ -147,23 +98,14 @@ import { useNavigation } from '@react-navigation/native';
       fontSize: 17,
       marginHorizontal: 10,
     },
-    InDcquantity: {
-      flexDirection: 'row',
-      marginVertical: 10,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
+   
     TextPrice: {
       textAlign: 'center',
       fontSize: 20,
-      marginTop: 30,
-      marginLeft: 20,
+      marginTop:10
+      
     },
-    totalContainer: {
-      backgroundColor: '#4E8D7C',
-      paddingVertical: 10,
-      alignItems: 'center',
-    },
+    
     totalText: {
       fontFamily: 'Poppins',
       fontSize: 20,
@@ -178,6 +120,13 @@ import { useNavigation } from '@react-navigation/native';
       justifyContent: "center",
       marginVertical: 5,
     },
+    textTotalPrice:{
+      fontSize: 17,
+      marginVertical:10,
+      marginLeft:265,
+      color:"#4E8D7C"
+    }
+ 
   });
 
   export default CartScreen;

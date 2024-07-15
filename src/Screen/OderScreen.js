@@ -31,7 +31,7 @@ const OderScreen = () => {
             <View style={styles.container}>
                 <View style={styles.drinkContainer}>
                     <Text style={styles.textDrink}>Drinks</Text>
-                    <Text style={styles.textSeeAll}>See all</Text>
+                    
                 </View>
                 <FlatList
                     data={products}

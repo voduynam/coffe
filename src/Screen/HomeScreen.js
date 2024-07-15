@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
-import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Header from '../component/Header';
 import data from '../data/Product.json';
 import { FlatList } from 'react-native-gesture-handler';
 import ProductCart from '../component/ProductCart';
+import { useNavigation } from '@react-navigation/native';
+import { ImageSlider } from "react-native-image-slider-banner";
 
 const HomeScreen = () => {
   const [products, setProducts] = useState(data.product);
+  const navagation =useNavigation();
 
+  const handleSeeAll =()=>{
+    navagation.navigate('ODERSCREEN');
+  }
   //render item
   const renderItem = ({ item }) => (
     <ProductCart item={item}/>
@@ -34,7 +40,11 @@ const HomeScreen = () => {
       </View>
       <View style={styles.drinkContainer}>
         <Text style={styles.textDrink}>Drinks</Text>
-        <Text style={styles.textSeeAll}> See all</Text>
+        <TouchableOpacity
+        onPress={handleSeeAll}>
+          <Text style={styles.textSeeAll}> See all</Text>
+        </TouchableOpacity>
+        
       </View>
       <FlatList
         data={products}
