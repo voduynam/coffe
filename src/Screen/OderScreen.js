@@ -1,105 +1,106 @@
 import React, { useState } from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { GestureHandlerRootView, FlatList } from 'react-native-gesture-handler';
-
-import data from "../data/Product.json";
+import { useDispatch, useSelector } from 'react-redux';
+import { StyleSheet, Text, TextInput, View, FlatList } from 'react-native';
+import ProductCart from '../component/ProductCart';
 import Header from '../component/Header';
-import { useNavigation } from '@react-navigation/native';
+import { searchProducts } from '../redux/cartSlice';
+import dataFood from "../data/ProductFood.json";
+import data from '../data/ProductDrink.json';
 
-const OderScreen = () => {
-    const [products, setProducts] = useState(data.product);
-    const navagation =useNavigation();
-    const renderItem = ({ item }) => (
-        <View style={styles.itemContainer}>
-            <TouchableOpacity
-                onPress={()=>{
-                    navagation.navigate('PRODUCTS_DETAIL', {item})
-                }}
-            >
-                <Image source={{ uri: item.image }} style={styles.image} />
-                <Text style={styles.title}>{item.title}</Text>
-                <Text style={styles.price}>{item.price}$</Text>
-            </TouchableOpacity>
-        </View>
-    );
+const OrderScreen = () => {
+  const dispatch = useDispatch();
+  const filteredProducts = useSelector(state => state.cart.filteredProducts);
+  const filteredProductsFood = useSelector(state => state.cart.filteredProductsFood);
+  const [products, setProducts] = useState(data.productDrink);
+  const [productsFood, setProductsFood] = useState(dataFood.productFood);
+  const [searchKeyword, setSearchKeyword] = useState('');
 
-    return (
-        
-        <GestureHandlerRootView>
-            <View><Header/></View>
-            
-            <View style={styles.container}>
-                <View style={styles.drinkContainer}>
-                    <Text style={styles.textDrink}>Drinks</Text>
-                    
-                </View>
-                <FlatList
-                    data={products}
-                    numColumns={3}
-                    renderItem={renderItem}
-                    keyExtractor={item => item.id.toString()}
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={styles.flatListContent}
-                />
+  const renderDrinkItem = ({ item }) => <ProductCart item={item} />;
+  const renderFoodItem = ({ item }) => <ProductCart item={item} />;
+
+  const handleSearch = () => {
+    dispatch(searchProducts({ keyword: searchKeyword }));
+  };
+
+  return (
+    <View style={styles.container}>
+      <Header />
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.textInput}
+          placeholder="Search"
+          value={searchKeyword}
+          onChangeText={text => setSearchKeyword(text)}
+          onSubmitEditing={handleSearch}
+        />
+      </View>
+      <View style={styles.drinkContainer}>
+        <Text style={styles.textDrink}>Drinks</Text>
+      </View>
+      <FlatList
+        data={products}
+        numColumns={3}
+        renderItem={renderDrinkItem}
+        keyExtractor={item => item.id.toString()}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.flatListContent}
+        ListFooterComponent={
+          <View>
+            <View style={styles.drinkContainer}>
+              <Text style={styles.textDrink}>Foods</Text>
             </View>
-        </GestureHandlerRootView>
-    );
+            <FlatList
+              data={productsFood}
+              numColumns={3}
+              renderItem={renderFoodItem}
+              keyExtractor={item => item.id.toString()}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={styles.flatListContent}
+            />
+          </View>
+        }
+      />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#F6F2ED',
-    },
-    drinkContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        padding: 10,
-    },
-    textDrink: {
-        fontSize: 20,
-        fontWeight: "700",
-        fontFamily: "Poppins",
-        color: "#272727",
-        marginLeft: 15,
-    },
-    textSeeAll: {
-        color: "#4E8D7C",
-        marginRight: 20,
-    },
-    itemContainer: {
-        flex: 1,
-        margin: 10,
-        backgroundColor: "white",
-        alignItems: "center",
-        borderRadius: 15,
-        padding: 10,
-    },
-    image: {
-        width: 80,
-        height: 100,
-    },
-    title: {
-        fontFamily: 'Poppins',
-        fontWeight: '400',
-        fontSize: 10,
-        color: '#272727',
-        marginTop: 2,
-        marginBottom: 2,
-        textAlign:"center"
-      },
-      price:{
-        fontFamily: 'Poppins',
-        fontWeight: '400',
-        fontSize: 10,
-        color: '#272727',
-        marginTop: 2,
-        marginBottom: 2,
-        textAlign:"center"
-      },
-    flatListContent: {
-        paddingBottom: 50,
-    },
+  container: {
+    flex: 1,
+    backgroundColor: '#F6F2ED',
+  },
+  drinkContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10,
+  },
+  textDrink: {
+    fontSize: 20,
+    fontWeight: '700',
+    fontFamily: 'Poppins',
+    color: '#272727',
+    marginLeft: 15,
+  },
+  flatListContent: {
+    paddingBottom: 50,
+  },
+  inputContainer: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    width: '90%',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    shadowRadius: 10,
+    shadowOpacity: 0.25,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginVertical: 10,
+  },
+  textInput: {
+    fontFamily: 'Poppins',
+    fontSize: 16,
+    color: '#272727',
+  },
 });
 
-export default OderScreen;
+export default OrderScreen;

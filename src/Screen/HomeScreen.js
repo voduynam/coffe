@@ -1,28 +1,42 @@
 import React, { useState } from 'react';
 import { Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Header from '../component/Header';
-import data from '../data/Product.json';
+import data from '../data/ProductDrink.json';
 import { FlatList } from 'react-native-gesture-handler';
 import ProductCart from '../component/ProductCart';
 import { useNavigation } from '@react-navigation/native';
-import { ImageSlider } from "react-native-image-slider-banner";
+import dataFood from "../data/ProductFood.json";
 
 const HomeScreen = () => {
-  const [products, setProducts] = useState(data.product);
+  const [products, setProducts] = useState(data.productDrink.slice(0,6));
+  const [productsFood, setProductsFood] = useState(dataFood.productFood.slice(0,6));
   const navagation =useNavigation();
 
   const handleSeeAll =()=>{
     navagation.navigate('ODERSCREEN');
   }
   //render item
-  const renderItem = ({ item }) => (
+  const renderDrinkItem = ({ item }) => (
+    <ProductCart item={item}/>
+  );
+  const renderFoodItem = ({ item }) => (
     <ProductCart item={item}/>
   );
 
   return (
     <SafeAreaView style={styles.container}>
       <Header />
-      <View style={styles.heaContainer}>
+      
+      <FlatList
+        data={products}
+        numColumns={3}
+        renderItem={renderDrinkItem}
+        keyExtractor={item => item.id.toString()}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.flatListContent}
+        ListHeaderComponent={
+          <View>
+          <View style={styles.heaContainer}>
         <View>
           <Text style={styles.textGood}>Good Morning!</Text>
           <Text style={styles.textsologan}>Let's get this Coffee ☕️ </Text>
@@ -46,13 +60,22 @@ const HomeScreen = () => {
         </TouchableOpacity>
         
       </View>
+      </View>
+        }
+        ListFooterComponent={
+          <View><View style={styles.drinkContainer}>
+          <Text style={styles.textDrink}>Foods</Text>
+      </View>
       <FlatList
-        data={products}
-        numColumns={3}
-        renderItem={renderItem}
-        keyExtractor={item => item.id.toString()}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.flatListContent}
+          data={productsFood}
+          numColumns={3}
+          renderItem={renderFoodItem}
+          keyExtractor={item => item.id.toString()}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.flatListContent}
+      /></View>
+              
+      }
       />
     </SafeAreaView>
   );

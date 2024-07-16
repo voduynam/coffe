@@ -1,9 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
-import users from '../data/User.json';
+import users from '../data/User.json'; // Assuming this is correctly imported
+
+// Define products and productsFood here or import them from external source
+import products from '../data/ProductDrink.json';
+import productsFood from '../data/ProductFood.json';
 
 const MAX_LOGIN_ATTEMPTS = 3;
 
-//  calculate total price of items in the cart
+// calculate total price of items in the cart
 const calculateTotalPrice = (items) => {
   return items.reduce((total, item) => {
     return total + item.totalPrice;
@@ -11,7 +15,6 @@ const calculateTotalPrice = (items) => {
 };
 
 const cartSlice = createSlice({
-  // delarae 
   name: 'cart',
   initialState: {
     items: [],
@@ -23,34 +26,28 @@ const cartSlice = createSlice({
     isFactorAuthentication2Enabled: false,
     isPasscodeLockEnabled: false,
     isFaceIDEnabled: false,
-
+    filteredProducts: [], 
+    filteredProductsFood: [],
   },
   reducers: {
-
-    //add to cart
     addToCart(state, action) {
       const newItem = action.payload;
-      //find 
       const existingItemIndex = state.items.findIndex(item =>
         item.id === newItem.id &&
         item.size === newItem.size &&
         item.ice === newItem.ice &&
         item.sweetness === newItem.sweetness
       );
-      //check have product if have a then  quantity +1
+
       if (existingItemIndex !== -1) {
         state.items[existingItemIndex].quantity++;
-        //update total in a product
         state.items[existingItemIndex].totalPrice = state.items[existingItemIndex].quantity * state.items[existingItemIndex].price;
       } else {
-        //add new iem
         state.items.push({ ...newItem, quantity: 1, totalPrice: newItem.price });
       }
-      state.totalPrice = calculateTotalPrice(state.items); // Update total price after adding item
+      state.totalPrice = calculateTotalPrice(state.items);
     },
 
-
-    //remove from cart
     removeFromCart(state, action) {
       const { id, size, ice, sweetness } = action.payload;
       const existingItemIndex = state.items.findIndex(item =>
@@ -73,7 +70,6 @@ const cartSlice = createSlice({
       state.totalPrice = calculateTotalPrice(state.items);
     },
 
-    //handle Login
     login(state, action) {
       const { email, password } = action.payload;
       const user = users.username.find(user => user.Email === email && user.Password === password);
@@ -82,30 +78,24 @@ const cartSlice = createSlice({
         state.isLoggedIn = true;
         state.user = user;
         state.loginError = null;
-
       } else {
         state.loginAttempts++;
         if (state.loginAttempts >= MAX_LOGIN_ATTEMPTS) {
           state.isLoggedIn = false;
           state.user = null;
           state.loginError = "Too many unsuccessful login attempts. Please try again later.";
-
         } else {
           state.isLoggedIn = false;
           state.user = null;
           state.loginError = "Invalid email or password!";
         }
       }
-      
     },
 
-    //handle log out
-    logout(state,){
-      state.isLoggedIn=false;
+    logout(state) {
+      state.isLoggedIn = false;
     },
 
-
-    // increment quantity
     incrementQuantity(state, action) {
       const { id, size, ice, sweetness } = action.payload;
       const existingItemIndex = state.items.findIndex(item =>
@@ -121,8 +111,6 @@ const cartSlice = createSlice({
       state.totalPrice = calculateTotalPrice(state.items);
     },
 
-
-    //decrment quantity
     decrementQuantity(state, action) {
       const { id, size, ice, sweetness } = action.payload;
       const existingItemIndex = state.items.findIndex(item =>
@@ -141,44 +129,50 @@ const cartSlice = createSlice({
       state.totalPrice = calculateTotalPrice(state.items);
     },
 
-    //clear all
-    clearAll(state, action) {
+    clearAll(state) {
       state.items.splice(0, state.items.length);
-      state.totalPrice = 0; // Reset total price when clearing all items
+      state.totalPrice = 0;
     },
 
-    //on  FactorAuthentication2
-    enableFactorAuthentication2: (state) => {
+    enableFactorAuthentication2(state) {
       state.isFactorAuthentication2Enabled = true;
     },
-    //off FactorAuthentication2
-    disableFactorAuthentication2: (state) => {
+
+    disableFactorAuthentication2(state) {
       state.isFactorAuthentication2Enabled = false;
     },
 
-    //on  PasscodeLock
-    enablePasscodeLock: (state) => {
+    enablePasscodeLock(state) {
       state.isPasscodeLockEnabled = true;
     },
 
-     //off PasscodeLock
-    disablePasscodeLock: (state) => {
+    disablePasscodeLock(state) {
       state.isPasscodeLockEnabled = false;
     },
 
-     //on  FaceID
-    enableFaceID: (state) => {
+    enableFaceID(state) {
       state.isFaceIDEnabled = true;
     },
 
-     //off FaceID
-    disableFaceID: (state) => {
+    disableFaceID(state) {
       state.isFaceIDEnabled = false;
+    },
+
+    // New action to search products by name
+    searchProducts(state, action) {
+      const { keyword } = action.payload;
+      state.filteredProducts = products.filter(
+        item => item.title.toLowerCase().includes(keyword.toLowerCase())
+      );
+      state.filteredProductsFood = productsFood.filter(
+        item => item.title.toLowerCase().includes(keyword.toLowerCase())
+      );
     },
   },
 });
 
-export const { addToCart,
+export const {
+  addToCart,
   removeFromCart,
   login,
   incrementQuantity,
@@ -191,5 +185,6 @@ export const { addToCart,
   enableFaceID,
   disableFaceID,
   logout,
+  searchProducts, // Exporting searchProducts action
 } = cartSlice.actions;
 export default cartSlice.reducer;
