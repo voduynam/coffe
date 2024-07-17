@@ -1,13 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 import users from '../data/User.json'; // Assuming this is correctly imported
 
-// Define products and productsFood here or import them from external source
 import products from '../data/ProductDrink.json';
 import productsFood from '../data/ProductFood.json';
 
+console.log('Products:', products); // Debug log
+console.log('Products Food:', productsFood); // Debug log
+
 const MAX_LOGIN_ATTEMPTS = 3;
 
-// calculate total price of items in the cart
 const calculateTotalPrice = (items) => {
   return items.reduce((total, item) => {
     return total + item.totalPrice;
@@ -158,15 +159,17 @@ const cartSlice = createSlice({
       state.isFaceIDEnabled = false;
     },
 
-    // New action to search products by name
     searchProducts(state, action) {
       const { keyword } = action.payload;
-      state.filteredProducts = products.filter(
+      console.log("Searching for:", keyword); // Debug log
+      state.filteredProducts = products.productDrink.filter(
         item => item.title.toLowerCase().includes(keyword.toLowerCase())
       );
-      state.filteredProductsFood = productsFood.filter(
+      console.log("Filtered products:", state.filteredProducts); // Debug log
+      state.filteredProductsFood = productsFood.productFood.filter(
         item => item.title.toLowerCase().includes(keyword.toLowerCase())
       );
+      console.log("Filtered food products:", state.filteredProductsFood); // Debug log
     },
   },
 });
@@ -175,6 +178,7 @@ export const {
   addToCart,
   removeFromCart,
   login,
+  logout,
   incrementQuantity,
   decrementQuantity,
   clearAll,
@@ -184,7 +188,7 @@ export const {
   disablePasscodeLock,
   enableFaceID,
   disableFaceID,
-  logout,
-  searchProducts, // Exporting searchProducts action
+  searchProducts
 } = cartSlice.actions;
+
 export default cartSlice.reducer;

@@ -1,19 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { StyleSheet, Text, TextInput, View, FlatList } from 'react-native';
 import ProductCart from '../component/ProductCart';
 import Header from '../component/Header';
 import { searchProducts } from '../redux/cartSlice';
-import dataFood from "../data/ProductFood.json";
+import dataFood from '../data/ProductFood.json';
 import data from '../data/ProductDrink.json';
+
+console.log('Drink Data:', data); // Debug log
+console.log('Food Data:', dataFood); // Debug log
 
 const OrderScreen = () => {
   const dispatch = useDispatch();
   const filteredProducts = useSelector(state => state.cart.filteredProducts);
   const filteredProductsFood = useSelector(state => state.cart.filteredProductsFood);
-  const [products, setProducts] = useState(data.productDrink);
-  const [productsFood, setProductsFood] = useState(dataFood.productFood);
   const [searchKeyword, setSearchKeyword] = useState('');
+
+  useEffect(() => {
+    // Initial dispatch to load all products
+    dispatch(searchProducts({ keyword: '' }));
+  }, [dispatch]);
 
   const renderDrinkItem = ({ item }) => <ProductCart item={item} />;
   const renderFoodItem = ({ item }) => <ProductCart item={item} />;
@@ -38,7 +44,7 @@ const OrderScreen = () => {
         <Text style={styles.textDrink}>Drinks</Text>
       </View>
       <FlatList
-        data={products}
+        data={filteredProducts}
         numColumns={3}
         renderItem={renderDrinkItem}
         keyExtractor={item => item.id.toString()}
@@ -50,7 +56,7 @@ const OrderScreen = () => {
               <Text style={styles.textDrink}>Foods</Text>
             </View>
             <FlatList
-              data={productsFood}
+              data={filteredProductsFood}
               numColumns={3}
               renderItem={renderFoodItem}
               keyExtractor={item => item.id.toString()}
