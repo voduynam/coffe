@@ -113,7 +113,7 @@ const App = () => {
     <Provider store={store}>
       <GestureHandlerRootView>
         <NavigationContainer>
-          <TabScreen />
+          <MainNavigator />
         </NavigationContainer>
       </GestureHandlerRootView>
     </Provider>

@@ -7,8 +7,6 @@ import { searchProducts } from '../redux/cartSlice';
 import dataFood from '../data/ProductFood.json';
 import data from '../data/ProductDrink.json';
 
-console.log('Drink Data:', data); // Debug log
-console.log('Food Data:', dataFood); // Debug log
 
 const OrderScreen = () => {
   const dispatch = useDispatch();
@@ -17,7 +15,7 @@ const OrderScreen = () => {
   const [searchKeyword, setSearchKeyword] = useState('');
 
   useEffect(() => {
-    // Initial dispatch to load all products
+ 
     dispatch(searchProducts({ keyword: '' }));
   }, [dispatch]);
 

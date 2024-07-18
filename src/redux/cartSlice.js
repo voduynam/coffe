@@ -1,11 +1,9 @@
-import { createSlice } from '@reduxjs/toolkit';
-import users from '../data/User.json'; // Assuming this is correctly imported
-
+import { createAsyncThunk, createSlice, isRejectedWithValue } from '@reduxjs/toolkit';
+import users from '../data/User.json'; 
+import axios from "axios";
 import products from '../data/ProductDrink.json';
 import productsFood from '../data/ProductFood.json';
 
-console.log('Products:', products); // Debug log
-console.log('Products Food:', productsFood); // Debug log
 
 const MAX_LOGIN_ATTEMPTS = 3;
 
@@ -14,6 +12,25 @@ const calculateTotalPrice = (items) => {
     return total + item.totalPrice;
   }, 0);
 };
+
+export const login = createAsyncThunk(
+  'cart/login',
+  async ({ email, password }, { rejectWithValue }) => {
+    try {
+      const response = await axios.get('https://667f7e38f2cb59c38dc90858.mockapi.io/api/user'); // Update with your mock API endpoint
+
+      const user = response.data.find(user => user.Email === email && user.Password === password);
+
+      if (user) {
+        return user;
+      } else {
+        return rejectWithValue("Invalid email or password!");
+      }
+    } catch (error) {
+      return rejectWithValue("Error occurred during login. Please try again later.");
+    }
+  }
+);
 
 const cartSlice = createSlice({
   name: 'cart',
@@ -27,7 +44,7 @@ const cartSlice = createSlice({
     isFactorAuthentication2Enabled: false,
     isPasscodeLockEnabled: false,
     isFaceIDEnabled: false,
-    filteredProducts: [], 
+    filteredProducts: [],
     filteredProductsFood: [],
   },
   reducers: {
@@ -161,23 +178,47 @@ const cartSlice = createSlice({
 
     searchProducts(state, action) {
       const { keyword } = action.payload;
-      console.log("Searching for:", keyword); // Debug log
+
       state.filteredProducts = products.productDrink.filter(
         item => item.title.toLowerCase().includes(keyword.toLowerCase())
       );
-      console.log("Filtered products:", state.filteredProducts); // Debug log
+   
       state.filteredProductsFood = productsFood.productFood.filter(
         item => item.title.toLowerCase().includes(keyword.toLowerCase())
       );
-      console.log("Filtered food products:", state.filteredProductsFood); // Debug log
+
     },
   },
+  extraReducers:(builder)=>{
+    builder
+    .addCase(login.pending,(state)=>{
+      state.loginError=null;
+    })
+    .addCase(login.fulfilled,(state, action)=>{
+      state.isLoggedIn = true;
+      state.user = action.payload;
+      state.loginAttempts = 0;
+      state.loginError = null;
+
+    })
+    .addCase(login.rejected, (state, action) => {
+      state.loginAttempts++;
+      if (state.loginAttempts >= MAX_LOGIN_ATTEMPTS) {
+        state.isLoggedIn = false;
+        state.user = null;
+        state.loginError = "Too many unsuccessful login attempts. Please try again later.";
+      } else {
+        state.isLoggedIn = false;
+        state.user = null;
+        state.loginError = action.payload || "Invalid email or password!";
+      }
+    });
+}
 });
 
 export const {
   addToCart,
   removeFromCart,
-  login,
   logout,
   incrementQuantity,
   decrementQuantity,
