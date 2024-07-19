@@ -1,30 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { StyleSheet, Text, TextInput, View, FlatList } from 'react-native';
+import { StyleSheet, Text, TextInput, View, FlatList, Button, ActivityIndicator } from 'react-native';
 import ProductCart from '../component/ProductCart';
 import Header from '../component/Header';
-import { searchProducts } from '../redux/cartSlice';
-import dataFood from '../data/ProductFood.json';
-import data from '../data/ProductDrink.json';
-
+import { fetchDrinks, setCurrentPage, selectDrinks, selectCurrentPage, selectIsLoading, selectError, searchProducts } from '../redux/OderSlice';
 
 const OrderScreen = () => {
   const dispatch = useDispatch();
-  const filteredProducts = useSelector(state => state.cart.filteredProducts);
-  const filteredProductsFood = useSelector(state => state.cart.filteredProductsFood);
+  const drinks = useSelector(selectDrinks);
+  const currentPage = useSelector(selectCurrentPage);
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
   const [searchKeyword, setSearchKeyword] = useState('');
 
+
+  limit = 6;
+
   useEffect(() => {
- 
-    dispatch(searchProducts({ keyword: '' }));
-  }, [dispatch]);
+    dispatch(fetchDrinks({ page: currentPage, limit }));
+  }, [dispatch, currentPage]);
+
+  //check if not item then render currentpage 1
+  useEffect(() => {
+    if (drinks.length === 0 && currentPage > 1) {
+      handleResetPage();
+    }
+  }, [drinks]);
+
+
+
+
+
+
+  const handleResetPage = () => {
+    dispatch(setCurrentPage(1));
+  };
+
+  const handleNextPage = () => {
+    dispatch(setCurrentPage(currentPage + 1));
+
+
+  };
+
+  const handlePrePage = () => {
+    if (currentPage > 1) {
+      dispatch(setCurrentPage(currentPage - 1));
+    }
+  };
 
   const renderDrinkItem = ({ item }) => <ProductCart item={item} />;
-  const renderFoodItem = ({ item }) => <ProductCart item={item} />;
 
   const handleSearch = () => {
     dispatch(searchProducts({ keyword: searchKeyword }));
   };
+ 
 
   return (
     <View style={styles.container}>
@@ -34,36 +63,39 @@ const OrderScreen = () => {
           style={styles.textInput}
           placeholder="Search"
           value={searchKeyword}
-          onChangeText={text => setSearchKeyword(text)}
+          onChangeText={(text) => setSearchKeyword(text)}
           onSubmitEditing={handleSearch}
         />
       </View>
-      <View style={styles.drinkContainer}>
-        <Text style={styles.textDrink}>Drinks</Text>
+    
+        <View style={styles.drinkContainer}>
+            <Text style={styles.textDrink}>Drinks</Text>
+        </View>
+   
+
+      {isLoading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : (
+        <FlatList
+          data={drinks}
+          numColumns={3}
+          renderItem={renderDrinkItem}
+          keyExtractor={(item) => item.id.toString()}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.flatListContent}
+        />
+      )}
+      {error && <Text style={styles.errorText}>{error}</Text>}
+      <View style={styles.containerButton}>
+        {currentPage > 1 && <View style={styles.buttonWrapper}>
+          <Button title="Previous" color="green" onPress={handlePrePage} />
+        </View>}
+
+        <View style={styles.buttonWrapper}>
+          <Button title="Next" color="green" onPress={handleNextPage} />
+        </View>
+
       </View>
-      <FlatList
-        data={filteredProducts}
-        numColumns={3}
-        renderItem={renderDrinkItem}
-        keyExtractor={item => item.id.toString()}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.flatListContent}
-        ListFooterComponent={
-          <View>
-            <View style={styles.drinkContainer}>
-              <Text style={styles.textDrink}>Foods</Text>
-            </View>
-            <FlatList
-              data={filteredProductsFood}
-              numColumns={3}
-              renderItem={renderFoodItem}
-              keyExtractor={item => item.id.toString()}
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.flatListContent}
-            />
-          </View>
-        }
-      />
     </View>
   );
 };
@@ -104,6 +136,21 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins',
     fontSize: 16,
     color: '#272727',
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 10,
+  },
+  containerButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+    paddingBottom: 20,
+  },
+  buttonWrapper: {
+    flex: 1,
+    marginHorizontal: 5,
   },
 });
 

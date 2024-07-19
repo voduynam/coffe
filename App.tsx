@@ -7,7 +7,6 @@ import { Provider, useSelector } from 'react-redux';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
-
 import RegisterScreen from './src/Screen/RegisterScreen';
 import SignInScreen from './src/Screen/SignInScreen';
 import HomeScreen from './src/Screen/HomeScreen';
@@ -16,20 +15,19 @@ import CartScreen from './src/Screen/CartScreen';
 import OrderDetailsScreen from './src/Screen/OderDetails';
 import CheckTotalProductDetail from './src/Screen/CheckTotalProductDetail';
 import ScanPayScreen from './src/Screen/ScanPayScreen';
-
 import { RootState } from './src/types/RootState';
 import { store } from './src/app/store';
-
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import AccountScreen from './src/Screen/AccountScreen';
+
+
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 const MyHomeStack = () => (
   <Stack.Navigator initialRouteName="HOME" screenOptions={{ headerShown: false }}>
-    <Stack.Screen name="SIGNUP" component={RegisterScreen} />
-    <Stack.Screen name="SIGNIN" component={SignInScreen} />
+
     <Stack.Screen name="HOME" component={HomeScreen} />
     <Stack.Screen name="PRODUCTS_DETAIL" component={OrderDetailsScreen} />
     <Stack.Screen name="CART_PRODUCT" component={CartScreen} />
@@ -91,7 +89,7 @@ const TabScreen = () => (
 );
 
 const MainNavigator = () => {
-  const isLoggedIn = useSelector((state: RootState) => state.cart.isLoggedIn);
+  const isLoggedIn = useSelector((state: RootState) => state.login.isLoggedIn);
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -113,7 +111,7 @@ const App = () => {
     <Provider store={store}>
       <GestureHandlerRootView>
         <NavigationContainer>
-          <MainNavigator />
+          <TabScreen />
         </NavigationContainer>
       </GestureHandlerRootView>
     </Provider>

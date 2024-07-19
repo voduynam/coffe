@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
-import CheckBox from '@react-native-community/checkbox'; 
+import CheckBox from '@react-native-community/checkbox';
 import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../redux/cartSlice';
+import { login } from '../redux/LoginSlice';
 
 const SignInScreen = () => {
   const [isSelected, setSelection] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
-  const loginError = useSelector(state => state.cart.loginError);
+  const loginError = useSelector(state => state.login.loginError);
 
   const handleLogin = () => {
     dispatch(login({ email, password }));
   };
-
+ 
   return (
     <View style={styles.container}>
       <Image source={require("../asset/CoffeeShotlogo.png")} style={styles.imageLY} />
@@ -32,7 +32,6 @@ const SignInScreen = () => {
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
-            
             required
           />
           <Text style={styles.TextUser}>Password</Text>
@@ -45,7 +44,7 @@ const SignInScreen = () => {
             required
           />
         </View>
-        {loginError &&(
+        {loginError && (
           <Text style={styles.loginError}> {loginError}</Text>
         )}
         <View>
@@ -63,9 +62,11 @@ const SignInScreen = () => {
           >
             <Text style={{ color: "white" }}>SIGN IN</Text>
           </TouchableOpacity>
+          
         </View>
       </View>
     </View>
+    
   );
 };
 
@@ -120,10 +121,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     marginBottom: 20,
   },
-  loginError:{
-    color:"red",
-    
-
+  loginError: {
+    color: "red",
   },
   Button: {
     backgroundColor: "#4B2C20",

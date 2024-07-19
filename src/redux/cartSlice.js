@@ -1,11 +1,9 @@
-import { createAsyncThunk, createSlice, isRejectedWithValue } from '@reduxjs/toolkit';
-import users from '../data/User.json'; 
-import axios from "axios";
+import {  createSlice } from '@reduxjs/toolkit';
 import products from '../data/ProductDrink.json';
 import productsFood from '../data/ProductFood.json';
 
 
-const MAX_LOGIN_ATTEMPTS = 3;
+
 
 const calculateTotalPrice = (items) => {
   return items.reduce((total, item) => {
@@ -13,34 +11,11 @@ const calculateTotalPrice = (items) => {
   }, 0);
 };
 
-export const login = createAsyncThunk(
-  'cart/login',
-  async ({ email, password }, { rejectWithValue }) => {
-    try {
-      const response = await axios.get('https://667f7e38f2cb59c38dc90858.mockapi.io/api/user'); // Update with your mock API endpoint
-
-      const user = response.data.find(user => user.Email === email && user.Password === password);
-
-      if (user) {
-        return user;
-      } else {
-        return rejectWithValue("Invalid email or password!");
-      }
-    } catch (error) {
-      return rejectWithValue("Error occurred during login. Please try again later.");
-    }
-  }
-);
-
 const cartSlice = createSlice({
   name: 'cart',
   initialState: {
     items: [],
     totalPrice: 0,
-    isLoggedIn: false,
-    user: null,
-    loginError: null,
-    loginAttempts: 0,
     isFactorAuthentication2Enabled: false,
     isPasscodeLockEnabled: false,
     isFaceIDEnabled: false,
@@ -87,29 +62,6 @@ const cartSlice = createSlice({
       }
       state.totalPrice = calculateTotalPrice(state.items);
     },
-
-    login(state, action) {
-      const { email, password } = action.payload;
-      const user = users.username.find(user => user.Email === email && user.Password === password);
-
-      if (user && state.loginAttempts < MAX_LOGIN_ATTEMPTS) {
-        state.isLoggedIn = true;
-        state.user = user;
-        state.loginError = null;
-      } else {
-        state.loginAttempts++;
-        if (state.loginAttempts >= MAX_LOGIN_ATTEMPTS) {
-          state.isLoggedIn = false;
-          state.user = null;
-          state.loginError = "Too many unsuccessful login attempts. Please try again later.";
-        } else {
-          state.isLoggedIn = false;
-          state.user = null;
-          state.loginError = "Invalid email or password!";
-        }
-      }
-    },
-
     logout(state) {
       state.isLoggedIn = false;
     },
@@ -176,44 +128,11 @@ const cartSlice = createSlice({
       state.isFaceIDEnabled = false;
     },
 
-    searchProducts(state, action) {
-      const { keyword } = action.payload;
 
-      state.filteredProducts = products.productDrink.filter(
-        item => item.title.toLowerCase().includes(keyword.toLowerCase())
-      );
-   
-      state.filteredProductsFood = productsFood.productFood.filter(
-        item => item.title.toLowerCase().includes(keyword.toLowerCase())
-      );
-
-    },
   },
-  extraReducers:(builder)=>{
-    builder
-    .addCase(login.pending,(state)=>{
-      state.loginError=null;
-    })
-    .addCase(login.fulfilled,(state, action)=>{
-      state.isLoggedIn = true;
-      state.user = action.payload;
-      state.loginAttempts = 0;
-      state.loginError = null;
-
-    })
-    .addCase(login.rejected, (state, action) => {
-      state.loginAttempts++;
-      if (state.loginAttempts >= MAX_LOGIN_ATTEMPTS) {
-        state.isLoggedIn = false;
-        state.user = null;
-        state.loginError = "Too many unsuccessful login attempts. Please try again later.";
-      } else {
-        state.isLoggedIn = false;
-        state.user = null;
-        state.loginError = action.payload || "Invalid email or password!";
-      }
-    });
-}
+  
+      
+  
 });
 
 export const {
@@ -229,7 +148,6 @@ export const {
   disablePasscodeLock,
   enableFaceID,
   disableFaceID,
-  searchProducts
 } = cartSlice.actions;
 
 export default cartSlice.reducer;
